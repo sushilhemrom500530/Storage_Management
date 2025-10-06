@@ -5,6 +5,7 @@ import { UserRoutes } from "../modules/user/user.route";
 import { FolderRoutes } from "../modules/folder/folder.routes";
 import { NoteRoutes } from "../modules/note/note.route";
 import { ImageRoutes } from "../modules/image/image.routes";
+import { PdfRoutes } from "../modules/pdf/pdf.routes";
 
 export const router = Router();
 
@@ -28,6 +29,10 @@ const moduleRoutes = [
   {
     path: "/image",
     route: ImageRoutes,
+  },
+  {
+    path: "/pdf",
+    route: PdfRoutes,
   },
   //   {
   //     path: "/stats",

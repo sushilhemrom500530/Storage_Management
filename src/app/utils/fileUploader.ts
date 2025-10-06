@@ -6,14 +6,11 @@ import fs from "fs";
 import { TCloudinaryResponse, TFile } from "../interfaces/file";
 import { envVars } from "../config/env";
 
-// Configuration
 cloudinary.config({
   cloud_name: envVars.CLOUDINARY.CLOUDINARY_CLOUD_NAME,
   api_key: envVars.CLOUDINARY.CLOUDINARY_API_KEY,
   api_secret: envVars.CLOUDINARY.CLOUDINARY_API_SECRET,
 });
-
-// disk storage
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -64,8 +61,22 @@ const uploadMultipleToCloudinary = async (
     )
   );
 };
+
+const uploadPdf = async (
+  file: TFile
+): Promise<TCloudinaryResponse | undefined> => {
+  // Validate file type
+  if (file.mimetype !== "application/pdf") {
+    throw new Error("Only PDF files are allowed");
+  }
+
+  // Call the function directly
+  return uploadToCloudinary(file);
+};
+
 export const fileUploader = {
   upload,
   uploadToCloudinary,
   uploadMultipleToCloudinary,
+  uploadPdf,
 };
