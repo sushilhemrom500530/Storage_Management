@@ -32,6 +32,10 @@ router.patch(
   ImageControllers.updateImage
 );
 
-router.delete("/delete/:id", ImageControllers.deleteImage);
+router.delete(
+  "/delete/:id",
+  checkAuth(...Object.values(Role)),
+  ImageControllers.deleteImage
+);
 
 export const ImageRoutes = router;

@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 import { formatSize } from "../../utils/formateSize";
+import { Folder } from "../folder/folder.model";
+import { Note } from "../note/note.model";
+import { Image } from "../image/image.model";
+import { Pdf } from "../pdf/pdf.model";
 
 const USER_STORAGE_LIMIT_BYTES = 15 * 1024 * 1024 * 1024; // 15 GB
 
@@ -53,6 +57,47 @@ const getStats = async (): Promise<any> => {
   };
 };
 
+const getFiltered = async (filters: Record<string, any> = {}): Promise<any> => {
+  const query: any = {};
+
+  if (filters.date) {
+    const date = new Date(filters.date);
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1);
+
+    query.createdAt = {
+      $gte: date,
+      $lt: nextDay,
+    };
+  }
+
+  if (filters.name) {
+    query.name = { $regex: filters.name, $options: "i" };
+  }
+
+  if (filters.folderId) {
+    query.parentFolder = filters.folderId;
+  }
+
+  const [folders, notes, images, pdfs] = await Promise.all([
+    Folder.find(query),
+    Note.find(query),
+    Image.find(query),
+    Pdf.find(query),
+  ]);
+
+  return {
+    totalItems: folders.length + notes.length + images.length + pdfs.length,
+    data: {
+      folders,
+      notes,
+      images,
+      pdfs,
+    },
+  };
+};
+
 export const StatsService = {
   getStats,
+  getFiltered,
 };

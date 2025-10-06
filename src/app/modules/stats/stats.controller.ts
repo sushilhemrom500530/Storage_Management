@@ -14,6 +14,17 @@ const getStats = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getFiltered = catchAsync(async (req: Request, res: Response) => {
+  const stats = await StatsService.getFiltered(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Data fetched successfully",
+    data: stats,
+  });
+});
+
 export const StatsController = {
   getStats,
+  getFiltered,
 };
