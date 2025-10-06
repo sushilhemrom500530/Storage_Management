@@ -5,7 +5,7 @@ import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { userSearchableFields } from "./user.constant";
-import { IAuthProvider, TUser, Role } from "./user.interface";
+import { TAuthProvider, TUser, Role } from "./user.interface";
 import { User } from "./user.model";
 
 const createUser = async (payload: Partial<TUser>) => {
@@ -22,7 +22,7 @@ const createUser = async (payload: Partial<TUser>) => {
     Number(envVars.BCRYPT_SALT_ROUND)
   );
 
-  const authProvider: IAuthProvider = {
+  const authProvider: TAuthProvider = {
     provider: "credentials",
     providerId: email as string,
   };
@@ -34,7 +34,9 @@ const createUser = async (payload: Partial<TUser>) => {
     ...rest,
   });
 
-  return user;
+  const createdUser = await User.findById(user?._id).select("-password -__v");
+
+  return createdUser;
 };
 
 const updateUser = async (
@@ -42,7 +44,7 @@ const updateUser = async (
   payload: Partial<TUser>,
   decodedToken: JwtPayload
 ) => {
-  if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
+  if (decodedToken.role === Role.USER) {
     if (userId !== decodedToken.userId) {
       throw new AppError(401, "You are not authorized");
     }
@@ -61,27 +63,14 @@ const updateUser = async (
     throw new AppError(401, "You are not authorized");
   }
 
-  /**
-   * email - can not update
-   * name, phone, password address
-   * password - re hashing
-   *  only admin superadmin - role, isDeleted...
-   *
-   * promoting to superadmin - superadmin
-   */
-
   if (payload.role) {
-    if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
+    if (decodedToken.role === Role.USER) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
     }
-
-    // if (payload.role === Role.SUPER_ADMIN && decodedToken.role === Role.ADMIN) {
-    //     throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
-    // }
   }
 
   if (payload.isActive || payload.isDeleted || payload.isVerified) {
-    if (decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE) {
+    if (decodedToken.role === Role.USER) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
     }
   }

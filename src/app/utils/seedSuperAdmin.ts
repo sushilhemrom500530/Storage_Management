@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { envVars } from "../config/env";
-import { IAuthProvider, TUser, Role } from "../modules/user/user.interface";
+import { TAuthProvider, TUser, Role } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 
 export const seedSuperAdmin = async () => {
@@ -21,7 +21,7 @@ export const seedSuperAdmin = async () => {
       Number(envVars.BCRYPT_SALT_ROUND)
     );
 
-    const authProvider: IAuthProvider = {
+    const authProvider: TAuthProvider = {
       provider: "credentials",
       providerId: envVars.SUPER_ADMIN_EMAIL,
     };
