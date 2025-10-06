@@ -12,5 +12,10 @@ router.get(
   checkAuth(...Object.values(Role)),
   StatsController.getFiltered
 );
+router.get(
+  "/recent",
+  checkAuth(...Object.values(Role)),
+  StatsController.getRecentData
+);
 
 export const StatsRoutes = router;

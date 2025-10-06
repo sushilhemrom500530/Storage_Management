@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 import { formatSize } from "../../utils/formateSize";
@@ -97,7 +98,27 @@ const getFiltered = async (filters: Record<string, any> = {}): Promise<any> => {
   };
 };
 
+const getRecentData = async (limitPerCollection: number = 5): Promise<any> => {
+  const [folders, notes, images, pdfs] = await Promise.all([
+    Folder.find({}).sort({ createdAt: -1 }).limit(limitPerCollection),
+    Note.find({}).sort({ createdAt: -1 }).limit(limitPerCollection),
+    Image.find({}).sort({ createdAt: -1 }).limit(limitPerCollection),
+    Pdf.find({}).sort({ createdAt: -1 }).limit(limitPerCollection),
+  ]);
+
+  return {
+    data: {
+      folders,
+      notes,
+      images,
+      pdfs,
+    },
+    totalItems: folders.length + notes.length + images.length + pdfs.length,
+  };
+};
+
 export const StatsService = {
   getStats,
   getFiltered,
+  getRecentData,
 };
