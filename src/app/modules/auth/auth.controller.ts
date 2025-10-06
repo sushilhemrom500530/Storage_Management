@@ -167,7 +167,7 @@ const forgotPassword = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Email Sent Successfully",
+      message: "Check Email, OTP Sent Successfully",
       data: null,
     });
   }
@@ -182,7 +182,7 @@ const verifyResetCode = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Code Verification Successfully",
+      message: "OTP verified successfully",
       data: null,
     });
   }

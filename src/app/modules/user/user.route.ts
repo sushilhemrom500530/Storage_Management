@@ -14,7 +14,7 @@ router.post(
 );
 router.get(
   "/all-users",
-  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   UserControllers.getAllUsers
 );
 
@@ -28,12 +28,12 @@ router.get(
 
 router.delete(
   "/delete/:id",
-  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   UserControllers.deletedUserFromDB
 );
 router.patch(
   "/soft-delete/:id",
-  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   UserControllers.softDeletedUser
 );
 

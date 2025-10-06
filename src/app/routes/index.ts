@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { AuthRoutes } from "../modules/auth/auth.route";
-import { OtpRoutes } from "../modules/otp/otp.route";
 // import { StatsRoutes } from "../modules/stats/stats.route";
 import { UserRoutes } from "../modules/user/user.route";
+import { FolderRoutes } from "../modules/folder/folder.routes";
 
 export const router = Router();
 
@@ -16,8 +16,8 @@ const moduleRoutes = [
     route: AuthRoutes,
   },
   {
-    path: "/otp",
-    route: OtpRoutes,
+    path: "/folder",
+    route: FolderRoutes,
   },
   //   {
   //     path: "/stats",
