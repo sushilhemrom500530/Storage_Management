@@ -6,6 +6,7 @@ import { FolderRoutes } from "../modules/folder/folder.routes";
 import { NoteRoutes } from "../modules/note/note.route";
 import { ImageRoutes } from "../modules/image/image.routes";
 import { PdfRoutes } from "../modules/pdf/pdf.routes";
+import { FavoriteRoutes } from "../modules/favorite/favorite.routes";
 
 export const router = Router();
 
@@ -33,6 +34,10 @@ const moduleRoutes = [
   {
     path: "/pdf",
     route: PdfRoutes,
+  },
+  {
+    path: "/favorite",
+    route: FavoriteRoutes,
   },
   {
     path: "/meta",
