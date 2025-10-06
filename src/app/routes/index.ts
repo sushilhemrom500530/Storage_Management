@@ -3,6 +3,7 @@ import { AuthRoutes } from "../modules/auth/auth.route";
 // import { StatsRoutes } from "../modules/stats/stats.route";
 import { UserRoutes } from "../modules/user/user.route";
 import { FolderRoutes } from "../modules/folder/folder.routes";
+import { NoteRoutes } from "../modules/note/note.route";
 
 export const router = Router();
 
@@ -18,6 +19,10 @@ const moduleRoutes = [
   {
     path: "/folder",
     route: FolderRoutes,
+  },
+  {
+    path: "/note",
+    route: NoteRoutes,
   },
   //   {
   //     path: "/stats",
