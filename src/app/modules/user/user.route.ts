@@ -14,20 +14,28 @@ router.post(
 );
 router.get(
   "/all-users",
-  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   UserControllers.getAllUsers
 );
+
 router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
+
 router.get(
   "/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.USER),
   UserControllers.getSingleUser
 );
 router.patch(
+  "/delete/:id",
+  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  UserControllers.deletedUser
+);
+
+router.patch(
   "/:id",
   validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)),
   UserControllers.updateUser
 );
-// /api/v1/user/:id
+
 export const UserRoutes = router;

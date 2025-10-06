@@ -84,7 +84,13 @@ const updateUser = async (
 };
 
 const getAllUsers = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(User.find(), query);
+  const defaultFilter = {
+    isDeleted: "false",
+    isActive: "ACTIVE",
+  };
+  const mergedQuery = { ...defaultFilter, ...query };
+
+  const queryBuilder = new QueryBuilder(User.find(), mergedQuery);
   const usersData = queryBuilder
     .filter()
     .search(userSearchableFields)
@@ -115,10 +121,26 @@ const getMe = async (userId: string) => {
   };
 };
 
+const deletedUser = async (userId: string) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+  user.isDeleted = "true";
+  await user.save();
+  const deletedUser = await User.findById(userId).select("-password -__v");
+
+  return {
+    data: deletedUser,
+  };
+};
+
 export const UserServices = {
   createUser,
   getAllUsers,
   getSingleUser,
   updateUser,
   getMe,
+  deletedUser,
 };
