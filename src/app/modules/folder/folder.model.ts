@@ -7,7 +7,7 @@ const folderSchema = new Schema<TFolder>(
     description: { type: String },
     parentFolder: { type: Schema.Types.ObjectId, ref: "Folder", default: null },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 export const Folder = model<TFolder>("Folder", folderSchema);

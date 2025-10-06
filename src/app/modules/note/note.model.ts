@@ -7,7 +7,7 @@ const noteSchema = new Schema<TNote>(
     content: { type: String },
     folder: { type: Schema.Types.ObjectId, ref: "Folder" },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 export const Note = model<TNote>("Note", noteSchema);
