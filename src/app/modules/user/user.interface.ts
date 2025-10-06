@@ -28,5 +28,7 @@ export interface TUser {
   isVerified?: boolean;
   role?: Role;
   auths: TAuthProvider[];
+  verificationCode?: string;
+  verificationCodeExpires?: Date;
   createdAt?: Date;
 }

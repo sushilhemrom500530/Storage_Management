@@ -84,13 +84,13 @@ const updateUser = async (
 };
 
 const getAllUsers = async (query: Record<string, string>) => {
-  // const defaultFilter = {
-  //   isDeleted: "false",
-  //   isActive: "ACTIVE",
-  // };
-  // const mergedQuery = { ...defaultFilter, ...query };
+  const defaultFilter = {
+    isDeleted: "false",
+    isActive: "ACTIVE",
+  };
+  const mergedQuery = { ...defaultFilter, ...query };
 
-  const queryBuilder = new QueryBuilder(User.find(), query);
+  const queryBuilder = new QueryBuilder(User.find(), mergedQuery);
   const usersData = queryBuilder
     .filter()
     .search(userSearchableFields)

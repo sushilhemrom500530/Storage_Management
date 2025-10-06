@@ -105,6 +105,7 @@ const logout = catchAsync(
     });
   }
 );
+
 const changePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const newPassword = req.body.newPassword;
@@ -125,6 +126,7 @@ const changePassword = catchAsync(
     });
   }
 );
+
 const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user;
@@ -139,6 +141,7 @@ const resetPassword = catchAsync(
     });
   }
 );
+
 const setPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
@@ -154,6 +157,7 @@ const setPassword = catchAsync(
     });
   }
 );
+
 const forgotPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
@@ -168,6 +172,22 @@ const forgotPassword = catchAsync(
     });
   }
 );
+
+const verifyResetCode = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, code } = req.body;
+
+    await AuthServices.verifyResetCode(email, code);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Code Verification Successfully",
+      data: null,
+    });
+  }
+);
+
 const googleCallbackController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let redirectTo = req.query.state ? (req.query.state as string) : "";
@@ -205,6 +225,7 @@ export const AuthControllers = {
   resetPassword,
   setPassword,
   forgotPassword,
+  verifyResetCode,
   changePassword,
   googleCallbackController,
 };

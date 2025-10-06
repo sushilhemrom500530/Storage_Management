@@ -26,6 +26,8 @@ const userSchema = new Schema<TUser>(
     },
     isVerified: { type: Boolean, default: true },
     auths: [authProviderSchema],
+    verificationCode: { type: String },
+    verificationCodeExpires: { type: Date },
   },
   { timestamps: true, versionKey: false }
 );

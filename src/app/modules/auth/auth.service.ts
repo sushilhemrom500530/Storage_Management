@@ -6,7 +6,7 @@ import httpStatus from "http-status-codes";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
-import { sendEmail } from "../../utils/sendEmail";
+import { emailSender, generateVerificationCode } from "../../utils/sendEmail";
 import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import { TAuthProvider, IsActive } from "../user/user.interface";
 import { User } from "../user/user.model";
@@ -20,6 +20,7 @@ const getNewAccessToken = async (refreshToken: string) => {
     accessToken: newAccessToken,
   };
 };
+
 const resetPassword = async (
   payload: Record<string, any>,
   decodedToken: JwtPayload
@@ -42,6 +43,7 @@ const resetPassword = async (
 
   await isUserExist.save();
 };
+
 const forgotPassword = async (email: string) => {
   const isUserExist = await User.findOne({ email });
 
@@ -70,26 +72,51 @@ const forgotPassword = async (email: string) => {
     role: isUserExist.role,
   };
 
-  const resetToken = jwt.sign(jwtPayload, envVars.JWT_ACCESS_SECRET, {
+  await jwt.sign(jwtPayload, envVars.JWT_ACCESS_SECRET, {
     expiresIn: "10m",
   });
 
-  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+  const verificationCode = generateVerificationCode();
 
-  sendEmail({
-    to: isUserExist.email,
-    subject: "Password Reset",
-    templateName: "forgetPassword",
-    templateData: {
-      name: isUserExist.name,
-      resetUILink,
-    },
-  });
+  isUserExist.verificationCode = verificationCode;
+  isUserExist.verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  await isUserExist.save();
 
-  /**
-   * http://localhost:5173/reset-password?id=687f310c724151eb2fcf0c41&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODdmMzEwYzcyNDE1MWViMmZjZjBjNDEiLCJlbWFpbCI6InNhbWluaXNyYXI2QGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUzMTY2MTM3LCJleHAiOjE3NTMxNjY3Mzd9.LQgXBmyBpEPpAQyPjDNPL4m2xLF4XomfUPfoxeG0MKg
-   */
+  await emailSender(
+    email,
+    `
+      <div>
+        <p>Dear User,</p>
+        <p>Your password reset verification code is:</p>
+        <h2>${verificationCode}</h2>
+        <p>This code will expire in 10 minutes.</p>
+      </div>
+    `
+  );
 };
+
+export const verifyResetCode = async (email: string, code: string) => {
+  const user = await User.findOne({ email });
+
+  if (!user) throw new AppError(httpStatus.BAD_REQUEST, "User not found");
+  if (!user.verificationCode || !user.verificationCodeExpires)
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "No verification code found. Request a new one."
+    );
+  if (user.verificationCodeExpires < new Date())
+    throw new AppError(httpStatus.BAD_REQUEST, "Verification code expired.");
+  if (user.verificationCode !== code)
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid verification code.");
+
+  // Mark code as used
+  user.verificationCode = undefined;
+  user.verificationCodeExpires = undefined;
+  await user.save();
+
+  return { message: "Verification code is valid" };
+};
+
 const setPassword = async (userId: string, plainPassword: string) => {
   const user = await User.findById(userId);
 
@@ -125,6 +152,7 @@ const setPassword = async (userId: string, plainPassword: string) => {
 
   await user.save();
 };
+
 const changePassword = async (
   oldPassword: string,
   newPassword: string,
@@ -155,6 +183,7 @@ export const AuthServices = {
   getNewAccessToken,
   changePassword,
   setPassword,
+  verifyResetCode,
   forgotPassword,
   resetPassword,
 };
