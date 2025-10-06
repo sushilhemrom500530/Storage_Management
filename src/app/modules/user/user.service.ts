@@ -44,7 +44,7 @@ const updateUser = async (
   payload: Partial<TUser>,
   decodedToken: JwtPayload
 ) => {
-  if (decodedToken.role === Role.USER) {
+  if (decodedToken?.role === Role.USER) {
     if (userId !== decodedToken.userId) {
       throw new AppError(401, "You are not authorized");
     }
