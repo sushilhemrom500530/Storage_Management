@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { AuthRoutes } from "../modules/auth/auth.route";
-// import { StatsRoutes } from "../modules/stats/stats.route";
+import { StatsRoutes } from "../modules/stats/stats.route";
 import { UserRoutes } from "../modules/user/user.route";
 import { FolderRoutes } from "../modules/folder/folder.routes";
 import { NoteRoutes } from "../modules/note/note.route";
@@ -34,10 +34,10 @@ const moduleRoutes = [
     path: "/pdf",
     route: PdfRoutes,
   },
-  //   {
-  //     path: "/stats",
-  //     route: StatsRoutes,
-  //   },
+  {
+    path: "/meta",
+    route: StatsRoutes,
+  },
 ];
 
 moduleRoutes.forEach((route) => {
