@@ -25,10 +25,16 @@ router.get(
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.USER),
   UserControllers.getSingleUser
 );
-router.patch(
+
+router.delete(
   "/delete/:id",
   // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-  UserControllers.deletedUser
+  UserControllers.deletedUserFromDB
+);
+router.patch(
+  "/soft-delete/:id",
+  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  UserControllers.softDeletedUser
 );
 
 router.patch(

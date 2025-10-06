@@ -95,10 +95,24 @@ const getSingleUser = catchAsync(
     });
   }
 );
-const deletedUser = catchAsync(
+
+const deletedUserFromDB = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    const result = await UserServices.deletedUser(id);
+    const result = await UserServices.deletedUserFromDB(id);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.CREATED,
+      message: "User Deleted Successfully",
+      data: result.data,
+    });
+  }
+);
+
+const softDeletedUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const result = await UserServices.softDeletedUser(id);
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
@@ -116,7 +130,8 @@ export const UserControllers = {
   getSingleUser,
   updateUser,
   getMe,
-  deletedUser,
+  deletedUserFromDB,
+  softDeletedUser,
 };
 
 // route matching -> controller -> service -> model -> DB

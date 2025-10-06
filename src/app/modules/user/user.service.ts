@@ -84,13 +84,13 @@ const updateUser = async (
 };
 
 const getAllUsers = async (query: Record<string, string>) => {
-  const defaultFilter = {
-    isDeleted: "false",
-    isActive: "ACTIVE",
-  };
-  const mergedQuery = { ...defaultFilter, ...query };
+  // const defaultFilter = {
+  //   isDeleted: "false",
+  //   isActive: "ACTIVE",
+  // };
+  // const mergedQuery = { ...defaultFilter, ...query };
 
-  const queryBuilder = new QueryBuilder(User.find(), mergedQuery);
+  const queryBuilder = new QueryBuilder(User.find(), query);
   const usersData = queryBuilder
     .filter()
     .search(userSearchableFields)
@@ -121,7 +121,22 @@ const getMe = async (userId: string) => {
   };
 };
 
-const deletedUser = async (userId: string) => {
+const deletedUserFromDB = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const deletedUser = await User.findByIdAndDelete(userId).select(
+    "-password -__v"
+  );
+
+  return {
+    data: deletedUser,
+  };
+};
+
+const softDeletedUser = async (userId: string) => {
   const user = await User.findById(userId);
 
   if (!user) {
@@ -142,5 +157,6 @@ export const UserServices = {
   getSingleUser,
   updateUser,
   getMe,
-  deletedUser,
+  deletedUserFromDB,
+  softDeletedUser,
 };
